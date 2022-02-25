@@ -7,6 +7,10 @@
 - 秋元勝也
 - 和田隆史(メンター)
 
+## versionUP
+
+- 三笠友則
+
 ## Project setup
 
 ```
