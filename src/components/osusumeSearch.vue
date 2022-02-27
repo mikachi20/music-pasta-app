@@ -31,7 +31,7 @@ export default {
 
   computed: {
     user() {
-      return this.$store.state.user;
+      return this.$auth.currentUser;
     },
   },
 
@@ -61,17 +61,15 @@ export default {
           ...doc.data(),
         });
       });
-      console.log(this.user);
+      console.log("aaa" + this.osusumeUsers);
       for (let i = 0; i < this.osusumeUsers.length; i++) {
         if (this.osusumeUsers[i].id != this.user.uid) {
-          if (this.osusumeUsers[i].category == this.user.category) {
-            this.osusumeUsers2.push({
-              name: this.osusumeUsers[i].name,
-              likeArtist: this.osusumeUsers[i].likeArtist,
-              docid: this.osusumeUsers[i].docid,
-              numberLikes: this.osusumeUsers[i].numberLikes,
-            });
-          }
+          this.osusumeUsers2.push({
+            name: this.osusumeUsers[i].name,
+            likeArtist: this.osusumeUsers[i].likeArtist,
+            docid: this.osusumeUsers[i].docid,
+            numberLikes: this.osusumeUsers[i].numberLikes,
+          });
         }
       }
       console.log("!!:", this.osusumeUsers2);

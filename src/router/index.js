@@ -1,12 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import AfterSignIn from "@/views/AfterSignIn.vue";
+import BeforeSignIn from "@/views/BeforeSignIn.vue";
 import Osusume from "../components/osusumeSearch.vue";
 import Playlist from "../components/anythingSearch.vue";
-import BeforeSignIn from "@/views/BeforeSignIn.vue";
-import AfterSignIn from "@/views/AfterSignIn.vue";
-import store from "@/store";
+// import store from "@/store";
 import DisplayPlaylist from "../views/DisplayPlaylist.vue";
+import CreatePlaylist from "../views/CreatePlaylist.vue";
+import firebase from "firebase";
 
 Vue.use(VueRouter);
 
@@ -36,11 +38,7 @@ const routes = [
   {
     path: "/createPlaylist",
     name: "createPlaylist",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+    component: CreatePlaylist,
   },
   {
     path: "/playlist",
@@ -52,12 +50,12 @@ const routes = [
     redirect: "/BeforeSignIn",
   },
   {
-    path: "/BeforeSignIn",
+    path: "/beforeSignIn",
     name: "BeforeSignIn",
     component: BeforeSignIn,
   },
   {
-    path: "/AfterSignIn",
+    path: "/afterSignIn",
     name: "AfterSignIn",
     component: AfterSignIn,
   },
@@ -69,12 +67,29 @@ const router = new VueRouter({
   routes,
 });
 
-const isSignedIn = () => {
-  return store.getters.isSignedIn;
+const isSignedIn = async () => {
+  return await new Promise((resolve, reject) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged(
+      (user) => {
+        if (user) {
+          unsubscribe();
+          resolve(true);
+        } else {
+          unsubscribe();
+          resolve(false);
+        }
+      },
+      (error) => {
+        unsubscribe();
+        reject(error);
+      }
+    );
+  });
 };
 
-router.beforeEach((to, from, next) => {
-  if (to.name !== "BeforeSignIn" && !isSignedIn()) {
+router.beforeEach(async (to, from, next) => {
+  const auth = await isSignedIn();
+  if (to.name !== "BeforeSignIn" && !auth) {
     next("/BeforeSignIn");
   } else {
     next();

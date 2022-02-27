@@ -20,10 +20,11 @@
 export default {
   computed: {
     user() {
-      return this.$store.state.user;
+      return this.$auth.currentUser;
     },
   },
 };
+// console.log("user表示:" + this.user);
 </script>
 
 <style scoped>

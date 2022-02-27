@@ -1,30 +1,51 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/home">Home</router-link> |
-      <router-link to="/BeforeSignIn">Before Sign In Page</router-link> |
-      <router-link to="/AfterSignIn">After Sign In Page</router-link> |
+      <!-- <router-link to="/home">Home</router-link> | -->
+      <router-link to="/beforeSignIn">Before Sign In Page</router-link> |
+      <router-link to="/afterSignIn">After Sign In Page</router-link> |
       <router-link to="/createPlaylist">Create Playlist</router-link> |
-      <router-link to="/DisplayPlaylist">Display Playlist</router-link> |
+      <!-- <router-link to="/displayPlaylist">Display Playlist</router-link> | -->
       <router-link to="/osusume">osusume</router-link> |
-      <router-link to="/playlist">playlist</router-link>
-    </div>
-    <div class="sign-in">
-      <span @click="signIn">Sign In</span>
-      <span @click="signOut">Sign Out</span>
+      <router-link to="/playlist">playlist</router-link> |
+      <span class="sign-in">
+        <button v-if="isLoggin" v-on:click="logOut">ログアウト</button>
+        <button v-else v-on:click="logIn">ログイン</button>
+      </span>
     </div>
     <router-view />
   </div>
 </template>
 
 <script>
+import firebase from "firebase";
+
 export default {
+  data() {
+    return {
+      isLogin: false,
+    };
+  },
   methods: {
-    signIn() {
-      this.$store.dispatch("signInWithGoogle");
+    logIn() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then((result) => {
+          console.log({ result });
+          if (result.user) {
+            this.isLoggin = true;
+          }
+        });
     },
-    signOut() {
-      this.$store.dispatch("signOut");
+    logOut() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.isLoggin = false;
+        });
     },
   },
 };
