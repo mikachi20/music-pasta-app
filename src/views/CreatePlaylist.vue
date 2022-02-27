@@ -2,6 +2,9 @@
   <div id="app">
     <section id="theme">
       <h1>自分だけのプレイリストを作ろう</h1>
+      <h3>
+        ※現在、spotifyAPIを利用するにあたり、権限を所持するアカウントの利用者がいないため検索機能は使えない状態です。
+      </h3>
     </section>
     <div id="search-input-container">
       <input
@@ -80,7 +83,7 @@ export default {
       return selectedSongs;
     },
     user() {
-      return this.$store.state.user;
+      return this.$auth.currentUser;
     },
   },
 
@@ -88,8 +91,9 @@ export default {
     async search() {
       const searchSpotify = functions.httpsCallable("searchSpotify");
       const resSearchSpotify = await searchSpotify(this.inputText);
+      console.log("res" + JSON.stringify(resSearchSpotify));
       const items = resSearchSpotify.data.body?.tracks?.items;
-      console.log(items);
+      console.log("items" + items);
       if (items) {
         this.results = [];
         for (let item of items) {
